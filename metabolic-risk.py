@@ -31,14 +31,21 @@ def main():
 
     # 3. Make predictions if input is valid
     if st.button("Predict") and input_dict:
-      # Pass input_dict directly to your model or wrap it in a list/DataFrame
-      input_df = pd.DataFrame([input_dict])
-      # 3. CRUCIAL FIX: Force Python None / null values to become actual ML NaNs
-      input_df = input_df.fillna(value=np.nan)        
-      predictions = model.predict(input_df)
-      st.write("Running prediction...") 
-      # Show result
-      st.success(f'Estimated price: ${predictions["prediction_score_1"]:,.2f}')
+        # Pass input_dict directly to your model or wrap it in a list/DataFrame
+        input_df = pd.DataFrame([input_dict])
+        # 3. CRUCIAL FIX: Force proper conversion of types
+        # Convert Python None/null structures explicitly to numeric NaN or string 'missing'
+        for col in input_df.columns:
+            if input_df[col].dtype == "object":
+            # If the column is categorical/text, fill nulls with a string placeholder or empty string
+            input_df[col] = input_df[col].fillna("missing").astype(str)
+            else:
+            # If the column is numeric (float/int), enforce float type and proper np.nan
+            input_df[col] = pd.to_numeric(input_df[col], errors="coerce")
+        predictions = model.predict(input_df)
+        st.write("Running prediction...") 
+        # Show result
+        st.success(f'Estimated price: ${predictions["prediction_score_1"]:,.2f}')
  
 if __name__ == '__main__':
     main()
