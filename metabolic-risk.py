@@ -33,15 +33,28 @@ def main():
     if st.button("Predict") and input_dict:
         # Pass input_dict directly to your model or wrap it in a list/DataFrame
         input_df = pd.DataFrame([input_dict])
-        # 3. CRUCIAL FIX: Force proper conversion of types
-        # Convert Python None/null structures explicitly to numeric NaN or string 'missing'
-        for col in input_df.columns:
-            if input_df[col].dtype == "object":
-                # If the column is categorical/text, fill nulls with a string placeholder or empty string
-                input_df[col] = input_df[col].fillna("missing").astype(str)
-            else:
-                # If the column is numeric (float/int), enforce float type and proper np.nan
-                input_df[col] = pd.to_numeric(input_df[col], errors="coerce")
+        # 2. LOAD A REFERENCE ROW (Use your training CSV or a sample file)
+        # This provides the flawless blueprint of column dtypes (ints, floats, strings)
+        template_df = pd.read_csv("train.csv").iloc[[0]].copy()
+
+        # Clear out the reference data row to make it empty
+        for col in template_df.columns:
+          template_df[col] = np.nan
+
+        # 3. OVERWRITE WITH DICTIONARY INPUT
+        # input_dict comes from your json.loads(json_input)
+        for key, value in input_dict.items():
+          if key in template_df.columns:
+            # If the user typed null, python reads it as None. 
+            # Force it to become np.nan so PyCaret's imputation works
+            template_df.at[0, key] = np.nan if value is None else value
+
+        # 4. ENFORCE TYPES ACCORDING TO THE TEMPLATE
+        # This converts columns back to their true intended dtypes (e.g., float64, object)
+        input_df = template_df.astype(pd.read_csv("train.csv").dtypes.to_dict())
+
+
+
         predictions = model.predict(input_df)
         st.write("Running prediction...") 
         # Show result
