@@ -32,7 +32,7 @@ def main():
     if st.button("Predict") and input_dict:
       # Pass input_dict directly to your model or wrap it in a list/DataFrame
       input_df = pd.DataFrame([input_dict])
-      prediction = model.predict(input_df)
+      predictions = model.predict(input_df)
       st.write("Running prediction...") 
       # Show result
       st.success(f'Estimated price: ${predictions["prediction_score_1"]:,.2f}')
