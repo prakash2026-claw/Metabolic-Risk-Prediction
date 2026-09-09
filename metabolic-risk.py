@@ -103,12 +103,12 @@ if submit_button:
     
     with st.spinner("Calculating risk..."):
         # Make the prediction using PyCaret
-        predictions = predict_model(model, data=df,raw_score=True)
+        predictions = predict_model(model, data=df,round=2,raw_score=True)
         prediction_label = predictions["prediction_label"].iloc[0]
         prediction_score_1 = predictions["prediction_score_1"].iloc[0]
         prediction_score_0 = predictions["prediction_score_0"].iloc[0]
         
         # Display the result to the user
         st.success("### Prediction Complete!")
-        st.metric(label="Risk Status Result", value=f"Class: {prediction_label} , Class 0 Score:{prediction_score_0}, Class 1 Score:{prediction_score_1}")
+        st.metric(label="Risk Status Result", value=f"Class: {prediction_label}")
         st.metric(label="Prediction Confidence Scores", value=f"Class 0 Score:{prediction_score_0}, Class 1 Score:{prediction_score_1}")
