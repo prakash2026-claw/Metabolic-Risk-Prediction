@@ -31,7 +31,8 @@ def main():
     # 3. Make predictions if input is valid
     if st.button("Predict") and input_dict:
       # Pass input_dict directly to your model or wrap it in a list/DataFrame
-      prediction = model.predict([list(input_dict.values())])
+      input_df = pd.DataFrame([input_dict])
+      prediction = model.predict(input_df)
       st.write("Running prediction...") 
       # Show result
       st.success(f'Estimated price: ${predictions["prediction_score_1"]:,.2f}')
