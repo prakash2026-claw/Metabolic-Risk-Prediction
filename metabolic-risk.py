@@ -35,7 +35,7 @@ def main():
         input_df = pd.DataFrame([input_dict])
         # 2. Load the template row and immediately clean up columns
         # Replace this file name with your actual training sample path
-        df_sample = pd.read_csv("train.csv", nrows=1)
+        df_sample = pd.read_csv("train.csv", nrows=2)
 
         # Drop id and target columns if they exist in the file
         cols_to_drop = ["id", "target"]  # Update these with your exact column names
@@ -43,7 +43,9 @@ def main():
 
         # Store the clean column types mapping
         clean_dtypes = template_df.dtypes.to_dict()
-
+        # Row 1: A valid reference dummy row (left completely intact with non-null training values)
+        input_df = template_df.iloc[[0, 1]].copy().reset_index(drop=True)
+        
         # Clear out the reference data values, keeping the structure
         for col in template_df.columns:
           template_df[col] = np.nan
