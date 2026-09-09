@@ -36,6 +36,7 @@ def main():
         # 2. LOAD A REFERENCE ROW (Use your training CSV or a sample file)
         # This provides the flawless blueprint of column dtypes (ints, floats, strings)
         template_df = pd.read_csv("train.csv").iloc[[0]].copy()
+        template_df = template_df.drop(columns=['id','target'])
 
         # Clear out the reference data row to make it empty
         for col in template_df.columns:
