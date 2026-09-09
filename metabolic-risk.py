@@ -103,7 +103,7 @@ if submit_button:
     
     with st.spinner("Calculating risk..."):
         # Make the prediction using PyCaret
-        predictions = predict_model(model, data=df)
+        predictions = predict_model(model, data=df,raw_score=True)
         prediction_label = predictions["prediction_label"].iloc[0]
         prediction_score_1 = predictions["prediction_score_1"].iloc[0]
         prediction_score_0 = predictions["prediction_score_0"].iloc[0]
