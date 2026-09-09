@@ -35,7 +35,7 @@ def main():
         input_df = pd.DataFrame([input_dict])
         # 2. Load the template row and immediately clean up columns
         # 2. Load the template row and drop ID/Target
-        df_sample = pd.read_csv("your_training_data_sample.csv", nrows=2)  # Read 2 rows now
+        df_sample = pd.read_csv("train.csv", nrows=2)  # Read 2 rows now
         cols_to_drop = ["id", "target"]  # Update to match your exact dropped columns
         template_df = df_sample.drop(columns=cols_to_drop, errors="ignore").copy()
 
