@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 from pydantic import create_model
+from numpy import nan
 from pycaret.classification import load_model, predict_model
 
 
