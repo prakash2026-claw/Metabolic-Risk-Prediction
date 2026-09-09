@@ -33,28 +33,30 @@ def main():
     if st.button("Predict") and input_dict:
         # Pass input_dict directly to your model or wrap it in a list/DataFrame
         input_df = pd.DataFrame([input_dict])
-        # 2. LOAD A REFERENCE ROW (Use your training CSV or a sample file)
-        # This provides the flawless blueprint of column dtypes (ints, floats, strings)
-        template_df = pd.read_csv("train.csv").iloc[[0]].copy()
-        template_df = template_df.drop(columns=['id','target'])
+        # 2. Load the template row and immediately clean up columns
+        # Replace this file name with your actual training sample path
+        df_sample = pd.read_csv("train.csv", nrows=1)
 
-        # Clear out the reference data row to make it empty
+        # Drop id and target columns if they exist in the file
+        cols_to_drop = ["Id", "target"]  # Update these with your exact column names
+        template_df = df_sample.drop(columns=cols_to_drop, errors="ignore").copy()
+
+        # Store the clean column types mapping
+        clean_dtypes = template_df.dtypes.to_dict()
+
+        # Clear out the reference data values, keeping the structure
         for col in template_df.columns:
           template_df[col] = np.nan
 
-        # 3. OVERWRITE WITH DICTIONARY INPUT
+        # 3. Overwrite with user dictionary input
         # input_dict comes from your json.loads(json_input)
         for key, value in input_dict.items():
           if key in template_df.columns:
-            # If the user typed null, python reads it as None. 
-            # Force it to become np.nan so PyCaret's imputation works
+            # If the user typed null, Python reads it as None. Force it to np.nan.
             template_df.at[0, key] = np.nan if value is None else value
 
-        # 4. ENFORCE TYPES ACCORDING TO THE TEMPLATE
-        # This converts columns back to their true intended dtypes (e.g., float64, object)
-        input_df = template_df.astype(template_df.dtypes.to_dict())
-
-
+        # 4. Enforce types using the clean layout mapping we saved earlier
+        input_df = template_df.astype(clean_dtypes)
 
         predictions = model.predict(input_df)
         st.write("Running prediction...") 
