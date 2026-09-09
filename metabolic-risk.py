@@ -1,6 +1,7 @@
 import json
 import streamlit as st
 import pandas as pd
+import numpy as np
 from pycaret.classification import load_model, predict_model
 
 
@@ -32,6 +33,8 @@ def main():
     if st.button("Predict") and input_dict:
       # Pass input_dict directly to your model or wrap it in a list/DataFrame
       input_df = pd.DataFrame([input_dict])
+      # 3. CRUCIAL FIX: Force Python None / null values to become actual ML NaNs
+      input_df = input_df.fillna(value=np.nan)        
       predictions = model.predict(input_df)
       st.write("Running prediction...") 
       # Show result
