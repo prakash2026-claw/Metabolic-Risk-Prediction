@@ -52,7 +52,7 @@ def main():
 
         # 4. ENFORCE TYPES ACCORDING TO THE TEMPLATE
         # This converts columns back to their true intended dtypes (e.g., float64, object)
-        input_df = template_df.astype(pd.read_csv("train.csv").dtypes.to_dict())
+        input_df = template_df.astype(template_df.dtypes.to_dict())
 
 
 
