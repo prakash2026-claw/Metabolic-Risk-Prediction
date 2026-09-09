@@ -34,31 +34,29 @@ def main():
         # Pass input_dict directly to your model or wrap it in a list/DataFrame
         input_df = pd.DataFrame([input_dict])
         # 2. Load the template row and immediately clean up columns
-        # Replace this file name with your actual training sample path
-        df_sample = pd.read_csv("train.csv", nrows=2)
-
-        # Drop id and target columns if they exist in the file
-        cols_to_drop = ["id", "target"]  # Update these with your exact column names
+        # 2. Load the template row and drop ID/Target
+        df_sample = pd.read_csv("your_training_data_sample.csv", nrows=2)  # Read 2 rows now
+        cols_to_drop = ["id", "target"]  # Update to match your exact dropped columns
         template_df = df_sample.drop(columns=cols_to_drop, errors="ignore").copy()
 
-        # Store the clean column types mapping
         clean_dtypes = template_df.dtypes.to_dict()
+
+        # 3. Create the input dataframe
+        # Row 0: User Input (Cleared out first)
         # Row 1: A valid reference dummy row (left completely intact with non-null training values)
         input_df = template_df.iloc[[0, 1]].copy().reset_index(drop=True)
-        
-        # Clear out the reference data values, keeping the structure
-        for col in template_df.columns:
-          template_df[col] = np.nan
 
-        # 3. Overwrite with user dictionary input
+        for col in input_df.columns:
+          input_df.at[0, col] = np.nan  # Blank out ONLY the user row
+
+        # 4. Overwrite Row 0 with user input dictionary
         # input_dict comes from your json.loads(json_input)
         for key, value in input_dict.items():
-          if key in template_df.columns:
-            # If the user typed null, Python reads it as None. Force it to np.nan.
-            template_df.at[0, key] = np.nan if value is None else value
+          if key in input_df.columns:
+            input_df.at[0, key] = np.nan if value is None else value
 
-        # 4. Enforce types using the clean layout mapping we saved earlier
-        input_df = template_df.astype(clean_dtypes)
+        # 5. Enforce accurate data types across both rows
+        input_df = input_df.astype(clean_dtypes)
 
         predictions = model.predict(input_df)
         st.write("Running prediction...") 
