@@ -38,7 +38,7 @@ def main():
         df_sample = pd.read_csv("train.csv", nrows=1)
 
         # Drop id and target columns if they exist in the file
-        cols_to_drop = ["Id", "target"]  # Update these with your exact column names
+        cols_to_drop = ["id", "target"]  # Update these with your exact column names
         template_df = df_sample.drop(columns=cols_to_drop, errors="ignore").copy()
 
         # Store the clean column types mapping
