@@ -37,11 +37,11 @@ def main():
         # Convert Python None/null structures explicitly to numeric NaN or string 'missing'
         for col in input_df.columns:
             if input_df[col].dtype == "object":
-            # If the column is categorical/text, fill nulls with a string placeholder or empty string
-            input_df[col] = input_df[col].fillna("missing").astype(str)
+                # If the column is categorical/text, fill nulls with a string placeholder or empty string
+                input_df[col] = input_df[col].fillna("missing").astype(str)
             else:
-            # If the column is numeric (float/int), enforce float type and proper np.nan
-            input_df[col] = pd.to_numeric(input_df[col], errors="coerce")
+                # If the column is numeric (float/int), enforce float type and proper np.nan
+                input_df[col] = pd.to_numeric(input_df[col], errors="coerce")
         predictions = model.predict(input_df)
         st.write("Running prediction...") 
         # Show result
